@@ -16,7 +16,7 @@ def evaluate_embeddings(embeddings):
     :param embeddings:
     """
     X, Y = read_node_label('../data/wiki/wiki_labels.txt')
-    tr_frac = 0.8  # 采样率
+    tr_frac = 0.8  # 交叉验证百分比
     print("Training classifier using {:.2%} nodes...".format(tr_frac))
     clf = Classifier(embeddings=embeddings, clf=LogisticRegression())
     clf.split_train_evaluate(X, Y, tr_frac)
