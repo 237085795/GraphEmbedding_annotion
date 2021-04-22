@@ -27,14 +27,23 @@ from ..walker import RandomWalker
 class Node2Vec:
 
     def __init__(self, graph, walk_length, num_walks, p=1.0, q=1.0, workers=1, use_rejection_sampling=0):
+        """
 
+        :param graph:
+        :param walk_length:
+        :param num_walks:
+        :param p:控制重复访问刚刚访问过的顶点的概率,p越高，则访问刚刚访问过的顶点的概率会变低，反之变高
+        :param q:控制着游走是向外还是向内，q>1，游走向内，q<1，游走向外
+        :param workers:
+        :param use_rejection_sampling:
+        """
         self.graph = graph
         self._embeddings = {}
         self.walker = RandomWalker(
             graph, p=p, q=q, use_rejection_sampling=use_rejection_sampling)
 
         print("Preprocess transition probs...")
-        self.walker.preprocess_transition_probs()
+        self.walker.preprocess_transition_probs()  # 初始化alias_nodes和alias_edges
 
         self.sentences = self.walker.simulate_walks(
             num_walks=num_walks, walk_length=walk_length, workers=workers, verbose=1)

@@ -2,7 +2,7 @@ import numpy as np
 
 
 def create_alias_table(area_ratio):
-    """
+    """accept：接受概率，alias：不满足接受概率时的取的其他值
 
     :param area_ratio: sum(area_ratio)=1
     :return: accept,alias

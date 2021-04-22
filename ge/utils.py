@@ -1,4 +1,10 @@
 def preprocess_nxgraph(graph):
+    """
+
+    :param graph:
+    :return: idx2node:索引转系节点、node2idx：节点转索引
+    e.t.([1, 2, 3, 4], {1: 0, 2: 1, 3: 2, 4: 3})
+    """
     node2idx = {}
     idx2node = []
     node_size = 0

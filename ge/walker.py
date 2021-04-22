@@ -45,7 +45,12 @@ class RandomWalker:
         return walk
 
     def node2vec_walk(self, walk_length, start_node):
+        """未采用拒绝采样
 
+        :param walk_length:
+        :param start_node:
+        :return:
+        """
         G = self.G
         alias_nodes = self.alias_nodes
         alias_edges = self.alias_edges
@@ -71,7 +76,7 @@ class RandomWalker:
         return walk
 
     def node2vec_walk2(self, walk_length, start_node):
-        """
+        """采用拒绝策略
         Reference:
         KnightKing: A Fast Distributed Graph Random Walk Engine
         http://madsys.cs.tsinghua.edu.cn/publications/SOSP19-yang.pdf
@@ -178,8 +183,8 @@ class RandomWalker:
     def get_alias_edge(self, t, v):
         """
         compute unnormalized transition probability between nodes v and its neighbors give the previous visited node t.
-        :param t:
-        :param v:
+        :param t:上个节点
+        :param v:当前节点
         :return:
         """
         G = self.G
@@ -202,7 +207,9 @@ class RandomWalker:
         return create_alias_table(normalized_probs)
 
     def preprocess_transition_probs(self):
-        """
+        """分别生成alias_nodes和alias_edges，alias_nodes存储着在每个顶点时决定下一次
+        访问其邻接点时需要的alias表（不考虑当前顶点之前访问的顶点）。alias_edges存储着在
+        前一个访问顶点为 t ，当前顶点为 v 时决定下一次访问哪个邻接点时需要的alias表。
         Preprocessing of transition probabilities for guiding the random walks.
         """
         G = self.G
@@ -220,7 +227,7 @@ class RandomWalker:
 
             for edge in G.edges():
                 alias_edges[edge] = self.get_alias_edge(edge[0], edge[1])
-                if not G.is_directed():
+                if not G.is_directed():  # 无向图
                     alias_edges[(edge[1], edge[0])] = self.get_alias_edge(edge[1], edge[0])
                 self.alias_edges = alias_edges
 

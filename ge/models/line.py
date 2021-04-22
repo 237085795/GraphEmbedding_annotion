@@ -35,7 +35,13 @@ def line_loss(y_true, y_pred):
 
 
 def create_model(numNodes, embedding_size, order='second'):
+    """
 
+    :param numNodes:节点数
+    :param embedding_size:嵌入维度
+    :param order:一阶还是二阶
+    :return:
+    """
     v_i = Input(shape=(1,))
     v_j = Input(shape=(1,))
 
@@ -70,7 +76,7 @@ class LINE:
         """
 
         :param graph:
-        :param embedding_size:
+        :param embedding_size:嵌入向量的维度
         :param negative_ratio:
         :param order: 'first','second','all'
         """
@@ -96,6 +102,11 @@ class LINE:
         self.reset_model()
 
     def reset_training_config(self, batch_size, times):
+        """
+
+        :param batch_size:
+        :param times:
+        """
         self.batch_size = batch_size
         self.steps_per_epoch = (
             (self.samples_per_epoch - 1) // self.batch_size + 1)*times
@@ -205,6 +216,15 @@ class LINE:
         return self._embeddings
 
     def train(self, batch_size=1024, epochs=1, initial_epoch=0, verbose=1, times=1):
+        """
+
+        :param batch_size:
+        :param epochs:
+        :param initial_epoch:
+        :param verbose:
+        :param times:
+        :return:
+        """
         self.reset_training_config(batch_size, times)
         hist = self.model.fit_generator(self.batch_it, epochs=epochs, initial_epoch=initial_epoch, steps_per_epoch=self.steps_per_epoch,
                                         verbose=verbose)
