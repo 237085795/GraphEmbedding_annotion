@@ -35,30 +35,30 @@ def line_loss(y_true, y_pred):
 
 
 def create_model(numNodes, embedding_size, order='second'):
-    """
+    """生成LINE_model
 
-    :param numNodes:节点数
+    :param numNodes:节点数=输入维度
     :param embedding_size:嵌入维度
     :param order:一阶还是二阶
     :return:
     """
-    v_i = Input(shape=(1,))
-    v_j = Input(shape=(1,))
+    v_i = Input(shape=(1,))  # 节点i
+    v_j = Input(shape=(1,))  # 节点j
 
-    first_emb = Embedding(numNodes, embedding_size, name='first_emb')
-    second_emb = Embedding(numNodes, embedding_size, name='second_emb')
-    context_emb = Embedding(numNodes, embedding_size, name='context_emb')
+    first_emb = Embedding(numNodes, embedding_size, name='first_emb')  # 一阶嵌入
+    second_emb = Embedding(numNodes, embedding_size, name='second_emb')  # 二阶嵌入
+    context_emb = Embedding(numNodes, embedding_size, name='context_emb')  # 上下文嵌入
 
     v_i_emb = first_emb(v_i)
     v_j_emb = first_emb(v_j)
-
+    # 一阶嵌入
     v_i_emb_second = second_emb(v_i)
     v_j_context_emb = context_emb(v_j)
-
+    # 二阶嵌入
     first = Lambda(lambda x: tf.reduce_sum(
-        x[0]*x[1], axis=-1, keep_dims=False), name='first_order')([v_i_emb, v_j_emb])
+        x[0]*x[1], axis=-1, keep_dims=False), name='first_order')([v_i_emb, v_j_emb])  # 自定义一阶层
     second = Lambda(lambda x: tf.reduce_sum(
-        x[0]*x[1], axis=-1, keep_dims=False), name='second_order')([v_i_emb_second, v_j_context_emb])
+        x[0]*x[1], axis=-1, keep_dims=False), name='second_order')([v_i_emb_second, v_j_context_emb])  # 自定义二阶层
 
     if order == 'first':
         output_list = [first]
@@ -98,11 +98,11 @@ class LINE:
         self.edge_size = graph.number_of_edges()
         self.samples_per_epoch = self.edge_size*(1+negative_ratio)
 
-        self._gen_sampling_table()
+        self._gen_sampling_table()  # 初始化点边采样表
         self.reset_model()
 
     def reset_training_config(self, batch_size, times):
-        """
+        """设置训练参数
 
         :param batch_size:
         :param times:
@@ -112,14 +112,19 @@ class LINE:
             (self.samples_per_epoch - 1) // self.batch_size + 1)*times
 
     def reset_model(self, opt='adam'):
+        """设置模型
 
+        :param opt:
+        """
         self.model, self.embedding_dict = create_model(
             self.node_size, self.rep_size, self.order)
         self.model.compile(opt, line_loss)
         self.batch_it = self.batch_iter(self.node2idx)
 
     def _gen_sampling_table(self):
+        """负采样表，根据度的3/4，生成nodes_accept、nodes_alias
 
+        """
         # create sampling table for vertex
         power = 0.75
         numNodes = self.node_size
@@ -129,15 +134,16 @@ class LINE:
         for edge in self.graph.edges():
             node_degree[node2idx[edge[0]]
                         ] += self.graph[edge[0]][edge[1]].get('weight', 1.0)
+        # 构建节点出度dict
 
         total_sum = sum([math.pow(node_degree[i], power)
                          for i in range(numNodes)])
         norm_prob = [float(math.pow(node_degree[j], power)) /
                      total_sum for j in range(numNodes)]
-
+        # 归一化作为create_alias_table的输入
         self.node_accept, self.node_alias = create_alias_table(norm_prob)
 
-        # create sampling table for edge
+        # create sampling table for edge 边权采样
         numEdges = self.graph.number_of_edges()
         total_sum = sum([self.graph[edge[0]][edge[1]].get('weight', 1.0)
                          for edge in self.graph.edges()])
@@ -147,7 +153,10 @@ class LINE:
         self.edge_accept, self.edge_alias = create_alias_table(norm_prob)
 
     def batch_iter(self, node2idx):
+        """生成Generator
 
+        :param node2idx:
+        """
         edges = [(node2idx[x[0]], node2idx[x[1]]) for x in self.graph.edges()]
 
         data_size = self.graph.number_of_edges()
@@ -216,10 +225,10 @@ class LINE:
         return self._embeddings
 
     def train(self, batch_size=1024, epochs=1, initial_epoch=0, verbose=1, times=1):
-        """
+        """设置训练参数，训练模型
 
         :param batch_size:
-        :param epochs:
+        :param epochs:整个样本训练几轮
         :param initial_epoch:
         :param verbose:
         :param times:
@@ -228,5 +237,4 @@ class LINE:
         self.reset_training_config(batch_size, times)
         hist = self.model.fit_generator(self.batch_it, epochs=epochs, initial_epoch=initial_epoch, steps_per_epoch=self.steps_per_epoch,
                                         verbose=verbose)
-
         return hist
