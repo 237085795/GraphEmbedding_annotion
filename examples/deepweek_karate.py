@@ -48,12 +48,12 @@ def NMI_Q_plot(embeddings, num_coms=2):
     # print(node_pos)
     print(len(real), real)
 
-    colors = ['c', 'b', 'g', 'r', 'm', 'y', 'k', 'w','c', 'b', 'g', 'r', 'm', 'y', 'k', 'w']
-    print(colors)
+    # colors = ['c', 'b', 'g', 'r', 'm', 'y', 'k', 'w','c', 'b', 'g', 'r', 'm', 'y', 'k', 'w']
+    # print(colors)
     for comu in range(len(real)):
         for idx in real[comu]:
             # print(comu,idx)
-            plt.scatter(node_pos[int(idx) - 1, 0], node_pos[int(idx) - 1, 1], c=colors[comu])
+            plt.scatter(node_pos[int(idx) - 1, 0], node_pos[int(idx) - 1, 1], label=comu)
     plt.legend
     plt.show()
 
@@ -63,12 +63,12 @@ if __name__ == "__main__":
     # G = nx.read_edgelist('../data/dophlin/dophlin_edgelist.txt', create_using=nx.Graph(), nodetype=None)
 
 
-    # model = DeepWalk(G, walk_length=10, num_walks=80, workers=1)
-    # model.train(window_size=5, iter=3)
+    model = DeepWalk(G, walk_length=20, num_walks=5, workers=1)
+    model.train(window_size=5, iter=3)
 
-    model = Node2Vec(G, walk_length=10, num_walks=80,
-                     p=0.25, q=4, workers=1, use_rejection_sampling=0)
-    model.train(window_size = 5, iter = 3)
+    # model = Node2Vec(G, walk_length=10, num_walks=80,
+    #                  p=0.25, q=4, workers=1, use_rejection_sampling=0)
+    # model.train(window_size = 5, iter = 3)
 
     # model = LINE(G, embedding_size=128, order='second')
     # # model = LINE(G, embedding_size=128, order='first')

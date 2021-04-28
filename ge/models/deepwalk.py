@@ -34,7 +34,7 @@ class DeepWalk:
         self.sentences = self.walker.simulate_walks(
             num_walks=num_walks, walk_length=walk_length, workers=workers, verbose=1)
 
-    def train(self, embed_size=128, window_size=5, workers=3, iter=5, **kwargs):
+    def train(self, embed_size=32, window_size=5, workers=3, iter=5, **kwargs):
         """通过word2vec模型训练节点嵌入
 
         :param embed_size:
