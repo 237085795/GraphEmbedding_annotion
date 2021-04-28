@@ -34,7 +34,8 @@ def plot_embeddings(embeddings,):
     for i in range(len(X)):
         color_idx.setdefault(Y[i][0], [])
         color_idx[Y[i][0]].append(i)
-
+    # 分辨率参数-dpi，画布大小参数-figsize
+    plt.figure(dpi=300, figsize=(24, 12))
     for c, idx in color_idx.items():
         plt.scatter(node_pos[idx, 0], node_pos[idx, 1], label=c)
     plt.legend()
@@ -46,8 +47,10 @@ if __name__ == "__main__":
                          create_using=nx.DiGraph(), nodetype=None, data=[('weight', int)])
 
     model = LINE(G, embedding_size=128, order='second')
+    # model = LINE(G, embedding_size=128, order='first')
+    # model = LINE(G, embedding_size=128, order='all')
     model.train(batch_size=1024, epochs=50, verbose=2)
     embeddings = model.get_embeddings()
 
-    evaluate_embeddings(embeddings)
+    # evaluate_embeddings(embeddings)
     plot_embeddings(embeddings)

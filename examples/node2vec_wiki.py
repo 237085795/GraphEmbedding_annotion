@@ -34,7 +34,8 @@ def plot_embeddings(embeddings,):
     for i in range(len(X)):
         color_idx.setdefault(Y[i][0], [])
         color_idx[Y[i][0]].append(i)
-
+    # 分辨率参数-dpi，画布大小参数-figsize
+    plt.figure(dpi=300, figsize=(24, 12))
     for c, idx in color_idx.items():
         plt.scatter(node_pos[idx, 0], node_pos[idx, 1], label=c)
     plt.legend()
@@ -49,5 +50,5 @@ if __name__ == "__main__":
     model.train(window_size = 5, iter = 3)
     embeddings=model.get_embeddings()
 
-    evaluate_embeddings(embeddings)
+    # evaluate_embeddings(embeddings)
     plot_embeddings(embeddings)

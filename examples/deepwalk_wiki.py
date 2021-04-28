@@ -17,10 +17,10 @@ def evaluate_embeddings(embeddings):
 
     :param embeddings:
     """
-    # X, Y = read_node_label('../data/wiki/wiki_labels.txt')
+    X, Y = read_node_label('../data/wiki/wiki_labels.txt')
     # X, Y = read_node_label('../data/flight/labels-brazil-airports.txt', True)
     # X, Y = read_node_label('../data/flight/labels-europe-airports.txt', True)
-    X, Y = read_node_label('../data/flight/labels-usa-airports.txt', True)
+    # X, Y = read_node_label('../data/flight/labels-usa-airports.txt', True)
     tr_frac = 0.8  # 交叉验证百分比
     print("Training classifier using {:.2%} nodes...".format(tr_frac))
     clf = Classifier(embeddings=embeddings, clf=LogisticRegression())
@@ -32,10 +32,10 @@ def plot_embeddings(embeddings,):
 
     :param embeddings:
     """
-    # X, Y = read_node_label('../data/wiki/wiki_labels.txt')
+    X, Y = read_node_label('../data/wiki/wiki_labels.txt')
     # X, Y = read_node_label('../data/flight/labels-brazil-airports.txt', True)
     # X, Y = read_node_label('../data/flight/labels-europe-airports.txt', True)
-    X, Y = read_node_label('../data/flight/labels-usa-airports.txt', True)
+    # X, Y = read_node_label('../data/flight/labels-usa-airports.txt', True)
 
     # print(Y)
     emb_list = []
@@ -57,6 +57,8 @@ def plot_embeddings(embeddings,):
     # 生产标签_节点字典
     # fig = plt.figure()
     # ax = Axes3D(fig)
+    # 分辨率参数-dpi，画布大小参数-figsize
+    plt.figure(dpi=300, figsize=(24, 12))
     for c, idx in color_idx.items():
         # print(c,idx)
         # print(node_pos[idx, 0],node_pos[idx, 1],node_pos[idx,2])
@@ -99,18 +101,18 @@ def plot_embeddings_3D(embeddings,):
 
 
 if __name__ == "__main__":
-    # G = nx.read_edgelist('../data/wiki/Wiki_edgelist.txt',
-    #                      create_using=nx.DiGraph(), nodetype=None, data=[('weight', int)])
+    G = nx.read_edgelist('../data/wiki/Wiki_edgelist.txt',
+                         create_using=nx.DiGraph(), nodetype=None, data=[('weight', int)])
     # G = nx.read_edgelist('../data/flight/brazil-airports.edgelist',
     #                      create_using=nx.DiGraph(), nodetype=None, data=[('weight', int)])
     # G = nx.read_edgelist('../data/flight/europe-airports.edgelist',
     #                      create_using=nx.DiGraph(), nodetype=None, data=[('weight', int)])
-    G = nx.read_edgelist('../data/flight/usa-airports.edgelist',
-                         create_using=nx.DiGraph(), nodetype=None, data=[('weight', int)])
+    # G = nx.read_edgelist('../data/flight/usa-airports.edgelist',
+    #                      create_using=nx.DiGraph(), nodetype=None, data=[('weight', int)])
     model = DeepWalk(G, walk_length=10, num_walks=80, workers=1)
     model.train(window_size=5, iter=3)
     embeddings = model.get_embeddings()
 
-    evaluate_embeddings(embeddings)
+    # evaluate_embeddings(embeddings)
     plot_embeddings(embeddings)
     # plot_embeddings_3D(embeddings)

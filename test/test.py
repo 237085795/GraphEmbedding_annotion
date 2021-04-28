@@ -31,10 +31,12 @@ import numpy as np
 # print(list(itertools.chain(list1)))
 # print(np.array(list2).shape)
 # print(list(itertools.chain(*list1)))
-# import networkx as nx
-# if __name__ == '__main__':
-#     G = nx.read_edgelist('../data/test.txt', create_using=nx.DiGraph(), nodetype=int, data=[('weight', int)])
-#     print(G.number_of_edges())
+import networkx as nx
+if __name__ == '__main__':
+    G1 = nx.read_edgelist('../data/flight/usa-airports.edgelist', create_using=nx.DiGraph(), nodetype=int, data=[('weight', int)])
+    print(G1.number_of_edges())
+    G2 = nx.read_edgelist('../data/flight/usa-airports.edgelist', create_using=nx.Graph(), nodetype=int, data=[('weight', int)])
+    print(G2.number_of_edges())
 #     def preprocess_nxgraph(graph):
 #         node2idx = {}
 #         idx2node = []
@@ -200,12 +202,34 @@ from sklearn.preprocessing import MultiLabelBinarizer
 # scores = model.evaluate(X_test, y_test, verbose=0)
 
 
-class A:
-    def __init__(self):
-        self.x=1
-        self.p()
-        print("new")
-    def p(self):
-        print(self.x)
+# class A:
+# #     def __init__(self):
+# #         self.x=1
+# #         self.p()
+# #         print("new")
+# #     def p(self):
+# #         print(self.x)
+# #
+# # a=A()
 
-a=A()
+# import os
+#
+# def cmp_file(f1, f2):
+#     st1 = os.stat(f1)
+#     st2 = os.stat(f2)
+#
+#     # 比较文件大小
+#     if st1.st_size != st2.st_size:
+#         return False
+#
+#     bufsize = 8*1024
+#     with open(f1, 'rb') as fp1, open(f2, 'rb') as fp2:
+#         while True:
+#             b1 = fp1.read(bufsize)  # 读取指定大小的数据进行比较
+#             b2 = fp2.read(bufsize)
+#             if b1 != b2:
+#                 return False
+#             if not b1:
+#                 return True
+#
+# print(cmp_file('../data/wiki/Wiki_category.txt', '../data/wiki/wiki_labels.txt'))
