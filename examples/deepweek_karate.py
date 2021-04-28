@@ -1,90 +1,80 @@
-import numpy as np
-
-from ge.classify import read_node_label, Classifier
-from ge import DeepWalk
-from sklearn.linear_model import LogisticRegression
-from ge import Node2Vec
 import matplotlib.pyplot as plt
 import networkx as nx
-from sklearn.manifold import TSNE
-import math
-from cluster.clustering import kmeans_from_vec
-from metric.nmi import calc as NMI
+import numpy as np
 from sklearn.cluster import KMeans
-import networkx.algorithms.community as nx_comm
-# def NMI(A,B):
-#     # 样本点数
-#     total = len(A)
-#     A_ids = set(A)
-#     B_ids = set(B)
-#     # 互信息计算
-#     MI = 0
-#     eps = 1.4e-45
-#     for idA in A_ids:
-#         for idB in B_ids:
-#             idAOccur = np.where(A==idA)    # 输出满足条件的元素的下标
-#             idBOccur = np.where(B==idB)
-#             idABOccur = np.intersect1d(idAOccur,idBOccur)   # Find the intersection of two arrays.
-#             px = 1.0*len(idAOccur[0])/total
-#             py = 1.0*len(idBOccur[0])/total
-#             pxy = 1.0*len(idABOccur)/total
-#             MI = MI + pxy*math.log(pxy/(px*py)+eps,2)
-#     # 标准化互信息
-#     Hx = 0
-#     for idA in A_ids:
-#         idAOccurCount = 1.0*len(np.where(A==idA)[0])
-#         Hx = Hx - (idAOccurCount/total)*math.log(idAOccurCount/total+eps,2)
-#         Hy = 0
-#     for idB in B_ids:
-#         idBOccurCount = 1.0*len(np.where(B==idB)[0])
-#         Hy = Hy - (idBOccurCount/total)*math.log(idBOccurCount/total+eps,2)
-#     MIhat = 2.0*MI/(Hx+Hy)
-#     return MIhat
+from sklearn.manifold import TSNE
 
-if __name__ == "__main__":
-    G = nx.read_edgelist('../data/karate/karate_edgelist.txt',create_using=nx.Graph(), nodetype=None)
+from ge import DeepWalk, Node2Vec, LINE
+from metric.modularity import cal_Q as Q
+from metric.nmi import calc as NMI
 
-    model = DeepWalk(G, walk_length=10, num_walks=80, workers=1)
-    model.train(window_size=5, iter=3)
-
-    # model = Node2Vec(G, walk_length=10, num_walks=80,
-    #                  p=0.25, q=4, workers=1, use_rejection_sampling=0)
-    # model.train(window_size = 5, iter = 3)
+from cluster.clustering import kmeans_from_vec
 
 
-    embeddings = model.get_embeddings()
-    X_train = [embeddings[x] for x in embeddings]
-    num_coms = 2
-    clusters = KMeans(n_clusters=num_coms).fit_predict(X_train)
-    # print(clusters)
+def NMI_Q_plot(embeddings, num_coms=2):
+    emb = [embeddings[x] for x in embeddings]
 
-    communities = []
-    for i in range(num_coms):
-        communities.append(set())
+    # clusters = KMeans(n_clusters=num_coms).fit_predict(emb)
+    # predict = []
+    # for i in range(num_coms):
+    #     predict.append(set())
+    # for i in range(len(clusters)):
+    #     predict[clusters[i]].add(str(i + 1))
+    predict = kmeans_from_vec(emb,num_coms)
+    for i in range(len(predict)):
+        predict[i] = [str(x+1) for x in predict[i]]
 
-    for i in range(len(clusters)):
-        communities[clusters[i]].add(i)
-    print(communities)
+    real = []
+    # file = open("../data/karate/real_karate.txt")
+    # file = open("../data/dophlin/real_dolphin.txt")
+    file = open("../data/football/real_football.txt")
 
-    # mod = nx_comm.modularity(G, communities)
-    # print('The modularity of karate club graph is {:.4f}'.format(mod))
-
-    #
-    # predict=kmeans_from_vec(X_train,2)
-    #
-    real=[]
-
-    file = open("../data/karate/real_karate.txt")
     while 1:
         line = file.readline()
         if not line:
             break
         else:
-            real.append([int(i) for i in line.split()])
+            real.append([i for i in line.split()])
     file.close()
-    #
-    # # real = [map(int, l.split()) for l in open('../data/karate/real_karate.txt').readlines()]
-    # # print(real)
-    # print(predict,real)
-    print(NMI(communities,real))
-    # print(embeddings)
+    print(predict, real)
+    print("nmi:")
+    print(NMI(predict, real))
+    print("q:")
+    print(Q(predict, G))
+
+    emb = np.array(emb)
+    model = TSNE(n_components=2)
+    node_pos = model.fit_transform(emb)
+    # print(node_pos)
+    print(len(real), real)
+
+    colors = ['c', 'b', 'g', 'r', 'm', 'y', 'k', 'w','c', 'b', 'g', 'r', 'm', 'y', 'k', 'w']
+    print(colors)
+    for comu in range(len(real)):
+        for idx in real[comu]:
+            # print(comu,idx)
+            plt.scatter(node_pos[int(idx) - 1, 0], node_pos[int(idx) - 1, 1], c=colors[comu])
+    plt.legend
+    plt.show()
+
+if __name__ == "__main__":
+    # G = nx.read_edgelist('../data/karate/karate_edgelist.txt', create_using=nx.Graph(), nodetype=None)
+    G = nx.read_edgelist('../data/football/football_edgelist.txt', create_using=nx.Graph(), nodetype=None)
+    # G = nx.read_edgelist('../data/dophlin/dophlin_edgelist.txt', create_using=nx.Graph(), nodetype=None)
+
+
+    # model = DeepWalk(G, walk_length=10, num_walks=80, workers=1)
+    # model.train(window_size=5, iter=3)
+
+    model = Node2Vec(G, walk_length=10, num_walks=80,
+                     p=0.25, q=4, workers=1, use_rejection_sampling=0)
+    model.train(window_size = 5, iter = 3)
+
+    # model = LINE(G, embedding_size=128, order='second')
+    # # model = LINE(G, embedding_size=128, order='first')
+    # model = LINE(G, embedding_size=128, order='all')
+    # model.train(batch_size=1024, epochs=50, verbose=2)
+
+    embeddings = model.get_embeddings()
+
+    NMI_Q_plot(embeddings,12)

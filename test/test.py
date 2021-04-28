@@ -32,11 +32,12 @@ import numpy as np
 # print(np.array(list2).shape)
 # print(list(itertools.chain(*list1)))
 import networkx as nx
-if __name__ == '__main__':
-    G1 = nx.read_edgelist('../data/flight/usa-airports.edgelist', create_using=nx.DiGraph(), nodetype=int, data=[('weight', int)])
-    print(G1.number_of_edges())
-    G2 = nx.read_edgelist('../data/flight/usa-airports.edgelist', create_using=nx.Graph(), nodetype=int, data=[('weight', int)])
-    print(G2.number_of_edges())
+
+# if __name__ == '__main__':
+    # G1 = nx.read_edgelist('../data/flight/usa-airports.edgelist', create_using=nx.DiGraph(), nodetype=int, data=[('weight', int)])
+    # print(G1.number_of_edges())
+    # G2 = nx.read_edgelist('../data/flight/usa-airports.edgelist', create_using=nx.Graph(), nodetype=int, data=[('weight', int)])
+    # print(G2.number_of_edges())
 #     def preprocess_nxgraph(graph):
 #         node2idx = {}
 #         idx2node = []
@@ -233,3 +234,40 @@ from sklearn.preprocessing import MultiLabelBinarizer
 #                 return True
 #
 # print(cmp_file('../data/wiki/Wiki_category.txt', '../data/wiki/wiki_labels.txt'))
+from metric.nmi import calc as NMI
+# import numpy as np
+# import math
+# def NMI(A,B):
+#     # len(A) should be equal to len(B)
+#     total = len(A)
+#     A_ids = set(A)
+#     B_ids = set(B)
+#     #Mutual information
+#     MI = 0
+#     eps = 1.4e-45
+#     for idA in A_ids:
+#         for idB in B_ids:
+#             idAOccur = np.where(A==idA)
+#             idBOccur = np.where(B==idB)
+#             idABOccur = np.intersect1d(idAOccur,idBOccur)
+#             px = 1.0*len(idAOccur[0])/total
+#             py = 1.0*len(idBOccur[0])/total
+#             pxy = 1.0*len(idABOccur)/total
+#             MI = MI + pxy*math.log(pxy/(px*py)+eps,2)
+#     # Normalized Mutual information
+#     Hx = 0
+#     for idA in A_ids:
+#         idAOccurCount = 1.0*len(np.where(A==idA)[0])
+#         Hx = Hx - (idAOccurCount/total)*math.log(idAOccurCount/total+eps,2)
+#     Hy = 0
+#     for idB in B_ids:
+#         idBOccurCount = 1.0*len(np.where(B==idB)[0])
+#         Hy = Hy - (idBOccurCount/total)*math.log(idBOccurCount/total+eps,2)
+#     MIhat = 2.0*MI/(Hx+Hy)
+#     return MIhat
+
+a=[{'2','1','3','4','5'},{'9','10','11'},{'6','7','8'}]
+b=[['1','2','3','4','5'],['6','7','8'],['9','10','11']]
+
+
+print(NMI(a,b))
