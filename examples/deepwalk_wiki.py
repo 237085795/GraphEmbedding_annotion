@@ -60,7 +60,8 @@ def plot_embeddings(embeddings,):
     # 分辨率参数-dpi，画布大小参数-figsize
     plt.figure(dpi=300, figsize=(24, 12))
     for c, idx in color_idx.items():
-        # print(c,idx)
+        print(type(idx))
+        print(c,idx)
         # print(node_pos[idx, 0],node_pos[idx, 1],node_pos[idx,2])
         plt.scatter(node_pos[idx, 0], node_pos[idx, 1], label=c)
         # ax.scatter(node_pos[idx, 0], node_pos[idx, 1], node_pos[idx, 2], label=c)
