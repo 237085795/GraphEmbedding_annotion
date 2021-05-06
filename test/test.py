@@ -33,11 +33,14 @@ import numpy as np
 # print(list(itertools.chain(*list1)))
 import networkx as nx
 
-# if __name__ == '__main__':
+if __name__ == '__main__':
     # G1 = nx.read_edgelist('../data/flight/usa-airports.edgelist', create_using=nx.DiGraph(), nodetype=int, data=[('weight', int)])
-    # print(G1.number_of_edges())
-    # G2 = nx.read_edgelist('../data/flight/usa-airports.edgelist', create_using=nx.Graph(), nodetype=int, data=[('weight', int)])
-    # print(G2.number_of_edges())
+    G1 = nx.read_edgelist('../data/flight/europe-airports.edgelist', create_using=nx.DiGraph(), nodetype=int,
+                          data=[('weight', int)])
+    # G1 = nx.read_edgelist('../data/flight/brazil-airports.edgelist', create_using=nx.DiGraph(), nodetype=int,
+    #                       data=[('weight', int)])
+    print(G1.number_of_nodes())
+    print(G1.number_of_edges())
 #     def preprocess_nxgraph(graph):
 #         node2idx = {}
 #         idx2node = []
@@ -234,7 +237,7 @@ from sklearn.preprocessing import MultiLabelBinarizer
 #                 return True
 #
 # print(cmp_file('../data/wiki/Wiki_category.txt', '../data/wiki/wiki_labels.txt'))
-from metric.nmi import calc as NMI
+# from metric.nmi import calc as NMI
 # import numpy as np
 # import math
 # def NMI(A,B):
@@ -266,8 +269,8 @@ from metric.nmi import calc as NMI
 #     MIhat = 2.0*MI/(Hx+Hy)
 #     return MIhat
 
-a=[{'2','1','3','4','5'},{'9','10','11'},{'6','7','8'}]
-b=[['1','2','3','4','5'],['6','7','8'],['9','10','11']]
-
-
-print(NMI(a,b))
+# a=[{'2','1','3','4','5'},{'9','10','11'},{'6','7','8'}]
+# b=[['1','2','3','4','5'],['6','7','8'],['9','10','11']]
+#
+#
+# print(NMI(a,b))

@@ -2,7 +2,7 @@
 import numpy as np
 
 from ge.classify import read_node_label, Classifier
-from ge import DeepWalk
+from ge import DeepWalk,LINE,Node2Vec
 from sklearn.linear_model import LogisticRegression
 
 import matplotlib.pyplot as plt
@@ -17,14 +17,14 @@ def evaluate_embeddings(embeddings):
 
     :param embeddings:
     """
-    X, Y = read_node_label('../data/wiki/wiki_labels.txt')
+    # X, Y = read_node_label('../data/wiki/wiki_labels.txt')
     # X, Y = read_node_label('../data/flight/labels-brazil-airports.txt', True)
     # X, Y = read_node_label('../data/flight/labels-europe-airports.txt', True)
-    # X, Y = read_node_label('../data/flight/labels-usa-airports.txt', True)
+    X, Y = read_node_label('../data/flight/labels-usa-airports.txt', True)
     tr_frac = 0.8  # 交叉验证百分比
     print("Training classifier using {:.2%} nodes...".format(tr_frac))
     clf = Classifier(embeddings=embeddings, clf=LogisticRegression())
-    clf.split_train_evaluate(X, Y, tr_frac)
+    return clf.split_train_evaluate(X, Y, tr_frac)
 
 
 def plot_embeddings(embeddings,):
@@ -32,8 +32,8 @@ def plot_embeddings(embeddings,):
 
     :param embeddings:
     """
-    X, Y = read_node_label('../data/wiki/wiki_labels.txt')
-    # X, Y = read_node_label('../data/flight/labels-brazil-airports.txt', True)
+    # X, Y = read_node_label('../data/wiki/wiki_labels.txt')
+    X, Y = read_node_label('../data/flight/labels-brazil-airports.txt', True)
     # X, Y = read_node_label('../data/flight/labels-europe-airports.txt', True)
     # X, Y = read_node_label('../data/flight/labels-usa-airports.txt', True)
 
@@ -102,18 +102,52 @@ def plot_embeddings_3D(embeddings,):
 
 
 if __name__ == "__main__":
-    G = nx.read_edgelist('../data/wiki/Wiki_edgelist.txt',
-                         create_using=nx.DiGraph(), nodetype=None, data=[('weight', int)])
+    # G = nx.read_edgelist('../data/wiki/Wiki_edgelist.txt',
+    #                      create_using=nx.DiGraph(), nodetype=None, data=[('weight', int)])
     # G = nx.read_edgelist('../data/flight/brazil-airports.edgelist',
     #                      create_using=nx.DiGraph(), nodetype=None, data=[('weight', int)])
     # G = nx.read_edgelist('../data/flight/europe-airports.edgelist',
     #                      create_using=nx.DiGraph(), nodetype=None, data=[('weight', int)])
-    # G = nx.read_edgelist('../data/flight/usa-airports.edgelist',
-    #                      create_using=nx.DiGraph(), nodetype=None, data=[('weight', int)])
-    model = DeepWalk(G, walk_length=10, num_walks=80, workers=1)
-    model.train(window_size=5, iter=3)
-    embeddings = model.get_embeddings()
+    G = nx.read_edgelist('../data/flight/usa-airports.edgelist',
+                         create_using=nx.DiGraph(), nodetype=None, data=[('weight', int)])
 
-    # evaluate_embeddings(embeddings)
-    plot_embeddings(embeddings)
+
+    #
+
+
+    iter=100
+    sum_mic=0
+    sum_mac=0
+    sum_acc=0
+    for i in range(iter):
+
+
+
+
+        # model = DeepWalk(G, walk_length=10, num_walks=80, workers=1)
+        # model.train(window_size=5, iter=3)
+
+        # model = LINE(G, embedding_size=128, order='second')
+        # model = LINE(G, embedding_size=128, order='first')
+        # model = LINE(G, embedding_size=128, order='all')
+        # model.train(batch_size=1024, epochs=50, verbose=2)
+
+        model = Node2Vec(G, walk_length=10, num_walks=80,
+                         p=0.25, q=2, workers=1, use_rejection_sampling=0)
+        model.train(window_size=5, iter=3)
+
+        embeddings = model.get_embeddings()
+        dic = evaluate_embeddings(embeddings)
+        sum_mic+=dic['micro']
+        sum_mac+=dic['macro']
+        sum_acc+=dic['acc']
+
+    print('ave_micro:')
+    print(sum_mic/iter)
+    print('ave_macro:')
+    print(sum_mac/iter)
+    print('ave_acc:')
+    print(sum_acc/iter)
+
+    # plot_embeddings(embeddings)
     # plot_embeddings_3D(embeddings)
