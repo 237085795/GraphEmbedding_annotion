@@ -35,12 +35,14 @@ import networkx as nx
 
 if __name__ == '__main__':
     # G1 = nx.read_edgelist('../data/flight/usa-airports.edgelist', create_using=nx.DiGraph(), nodetype=int, data=[('weight', int)])
-    G1 = nx.read_edgelist('../data/flight/europe-airports.edgelist', create_using=nx.DiGraph(), nodetype=int,
-                          data=[('weight', int)])
+    G1 = nx.read_edgelist('../data/Net500/network.dat', create_using=nx.Graph(), nodetype=None)
+    G2 = nx.read_edgelist('../data/Net500/network.dat', create_using=nx.Graph(), nodetype=None)
     # G1 = nx.read_edgelist('../data/flight/brazil-airports.edgelist', create_using=nx.DiGraph(), nodetype=int,
     #                       data=[('weight', int)])
     print(G1.number_of_nodes())
     print(G1.number_of_edges())
+
+    print(G2.number_of_edges())
 #     def preprocess_nxgraph(graph):
 #         node2idx = {}
 #         idx2node = []
