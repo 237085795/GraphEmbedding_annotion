@@ -113,7 +113,7 @@ class Classifier(object):
         return self.evaluate(X_test, Y_test)
 
 
-def read_node_label(filename, skip_head=False):
+def read_node_label(filename, skip_head=False,is_net=False):
     """对两列文本返回左列X，右列Y
 
     :param filename:
@@ -129,7 +129,10 @@ def read_node_label(filename, skip_head=False):
         l = fin.readline()
         if l == '':
             break
-        vec = l.strip().split(' ')
+        if is_net:
+            vec = l.strip().split('\t')
+        else:
+            vec = l.strip().split(' ')
         X.append(vec[0])
         Y.append(vec[1:])
     fin.close()
