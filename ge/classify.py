@@ -63,15 +63,15 @@ class Classifier(object):
         # Out[2]:[1, 1, 1, 1, 1, 1, 1]
         Y_ = self.predict(X, top_k_list)  # 预测结果
         Y = self.binarizer.transform(Y)  # 实际标签
-        averages = ["micro", "macro", "samples", "weighted"]
+        averages = ["micro", "macro"]
         results = {}
         for average in averages:
             results[average] = f1_score(Y, Y_, average=average)
         results['acc'] = accuracy_score(Y, Y_)
-        print('-------------------')
-        print(results)
+        # print('-------------------')
+        # print(results)
         return results
-        print('-------------------')
+        # print('-------------------')
 
     def predict(self, X, top_k_list):
         """预测节点类别

@@ -62,5 +62,11 @@ def partition_num(num, workers):
     print(partition_num(40,3))
     out:[13, 13, 13, 1]
     '''
+import tkinter as tk
 
-
+def show(metric):
+    window = tk.Tk()
+    window.geometry('1000x300')
+    l = tk.Label(window, text=str(metric), font=('Arial', 12), width=300, height=2)
+    l.pack()
+    window.mainloop()

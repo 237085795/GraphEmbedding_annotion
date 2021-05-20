@@ -56,9 +56,9 @@ def create_model(numNodes, embedding_size, order='second'):
     v_j_context_emb = context_emb(v_j)
     # 二阶嵌入
     first = Lambda(lambda x: tf.reduce_sum(
-        x[0]*x[1], axis=-1, keep_dims=False), name='first_order')([v_i_emb, v_j_emb])  # 自定义一阶层
+        x[0]*x[1], axis=-1, keepdims=False), name='first_order')([v_i_emb, v_j_emb])  # 自定义一阶层
     second = Lambda(lambda x: tf.reduce_sum(
-        x[0]*x[1], axis=-1, keep_dims=False), name='second_order')([v_i_emb_second, v_j_context_emb])  # 自定义二阶层
+        x[0]*x[1], axis=-1, keepdims=False), name='second_order')([v_i_emb_second, v_j_context_emb])  # 自定义二阶层
 
     if order == 'first':
         output_list = [first]
